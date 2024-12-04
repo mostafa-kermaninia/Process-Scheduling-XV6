@@ -530,162 +530,131 @@ memmove(void *vdst, const void *vsrc, int n)
  36a:	c3                   	ret    
 
 0000036b <fork>:
-  name: \
-    movl $SYS_ ## name, %eax; \
-    int $T_SYSCALL; \
-    ret
-
-SYSCALL(fork)
  36b:	b8 01 00 00 00       	mov    $0x1,%eax
  370:	cd 40                	int    $0x40
  372:	c3                   	ret    
 
 00000373 <exit>:
-SYSCALL(exit)
  373:	b8 02 00 00 00       	mov    $0x2,%eax
  378:	cd 40                	int    $0x40
  37a:	c3                   	ret    
 
 0000037b <wait>:
-SYSCALL(wait)
  37b:	b8 03 00 00 00       	mov    $0x3,%eax
  380:	cd 40                	int    $0x40
  382:	c3                   	ret    
 
 00000383 <pipe>:
-SYSCALL(pipe)
  383:	b8 04 00 00 00       	mov    $0x4,%eax
  388:	cd 40                	int    $0x40
  38a:	c3                   	ret    
 
 0000038b <read>:
-SYSCALL(read)
  38b:	b8 05 00 00 00       	mov    $0x5,%eax
  390:	cd 40                	int    $0x40
  392:	c3                   	ret    
 
 00000393 <write>:
-SYSCALL(write)
  393:	b8 10 00 00 00       	mov    $0x10,%eax
  398:	cd 40                	int    $0x40
  39a:	c3                   	ret    
 
 0000039b <close>:
-SYSCALL(close)
  39b:	b8 15 00 00 00       	mov    $0x15,%eax
  3a0:	cd 40                	int    $0x40
  3a2:	c3                   	ret    
 
 000003a3 <kill>:
-SYSCALL(kill)
  3a3:	b8 06 00 00 00       	mov    $0x6,%eax
  3a8:	cd 40                	int    $0x40
  3aa:	c3                   	ret    
 
 000003ab <exec>:
-SYSCALL(exec)
  3ab:	b8 07 00 00 00       	mov    $0x7,%eax
  3b0:	cd 40                	int    $0x40
  3b2:	c3                   	ret    
 
 000003b3 <open>:
-SYSCALL(open)
  3b3:	b8 0f 00 00 00       	mov    $0xf,%eax
  3b8:	cd 40                	int    $0x40
  3ba:	c3                   	ret    
 
 000003bb <mknod>:
-SYSCALL(mknod)
  3bb:	b8 11 00 00 00       	mov    $0x11,%eax
  3c0:	cd 40                	int    $0x40
  3c2:	c3                   	ret    
 
 000003c3 <unlink>:
-SYSCALL(unlink)
  3c3:	b8 12 00 00 00       	mov    $0x12,%eax
  3c8:	cd 40                	int    $0x40
  3ca:	c3                   	ret    
 
 000003cb <fstat>:
-SYSCALL(fstat)
  3cb:	b8 08 00 00 00       	mov    $0x8,%eax
  3d0:	cd 40                	int    $0x40
  3d2:	c3                   	ret    
 
 000003d3 <link>:
-SYSCALL(link)
  3d3:	b8 13 00 00 00       	mov    $0x13,%eax
  3d8:	cd 40                	int    $0x40
  3da:	c3                   	ret    
 
 000003db <mkdir>:
-SYSCALL(mkdir)
  3db:	b8 14 00 00 00       	mov    $0x14,%eax
  3e0:	cd 40                	int    $0x40
  3e2:	c3                   	ret    
 
 000003e3 <chdir>:
-SYSCALL(chdir)
  3e3:	b8 09 00 00 00       	mov    $0x9,%eax
  3e8:	cd 40                	int    $0x40
  3ea:	c3                   	ret    
 
 000003eb <dup>:
-SYSCALL(dup)
  3eb:	b8 0a 00 00 00       	mov    $0xa,%eax
  3f0:	cd 40                	int    $0x40
  3f2:	c3                   	ret    
 
 000003f3 <getpid>:
-SYSCALL(getpid)
  3f3:	b8 0b 00 00 00       	mov    $0xb,%eax
  3f8:	cd 40                	int    $0x40
  3fa:	c3                   	ret    
 
 000003fb <sbrk>:
-SYSCALL(sbrk)
  3fb:	b8 0c 00 00 00       	mov    $0xc,%eax
  400:	cd 40                	int    $0x40
  402:	c3                   	ret    
 
 00000403 <sleep>:
-SYSCALL(sleep)
  403:	b8 0d 00 00 00       	mov    $0xd,%eax
  408:	cd 40                	int    $0x40
  40a:	c3                   	ret    
 
 0000040b <uptime>:
-SYSCALL(uptime)
  40b:	b8 0e 00 00 00       	mov    $0xe,%eax
  410:	cd 40                	int    $0x40
  412:	c3                   	ret    
 
 00000413 <create_palindrome>:
-SYSCALL(create_palindrome)
  413:	b8 16 00 00 00       	mov    $0x16,%eax
  418:	cd 40                	int    $0x40
  41a:	c3                   	ret    
 
 0000041b <move_file>:
-SYSCALL(move_file)
  41b:	b8 17 00 00 00       	mov    $0x17,%eax
  420:	cd 40                	int    $0x40
  422:	c3                   	ret    
 
 00000423 <sort_syscalls>:
-SYSCALL(sort_syscalls)
  423:	b8 18 00 00 00       	mov    $0x18,%eax
  428:	cd 40                	int    $0x40
  42a:	c3                   	ret    
 
 0000042b <get_most_invoked_syscall>:
-SYSCALL(get_most_invoked_syscall)
  42b:	b8 19 00 00 00       	mov    $0x19,%eax
  430:	cd 40                	int    $0x40
  432:	c3                   	ret    
 
 00000433 <list_all_processes>:
-SYSCALL(list_all_processes)
  433:	b8 1a 00 00 00       	mov    $0x1a,%eax
  438:	cd 40                	int    $0x40
  43a:	c3                   	ret    

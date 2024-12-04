@@ -7230,11 +7230,6 @@ forkret(void)
 80103921:	89 e5                	mov    %esp,%ebp
 80103923:	56                   	push   %esi
 80103924:	53                   	push   %ebx
-
-static inline uint
-readeflags(void)
-{
-  uint eflags;
   asm volatile("pushfl; popl %0" : "=r" (eflags));
 80103925:	9c                   	pushf  
 80103926:	58                   	pop    %eax
@@ -7613,11 +7608,6 @@ myproc(void) {
   c->proc = 0;
 80103c7a:	8d 78 04             	lea    0x4(%eax),%edi
 80103c7d:	8d 76 00             	lea    0x0(%esi),%esi
-}
-
-static inline void
-sti(void)
-{
   asm volatile("sti");
 80103c80:	fb                   	sti    
     acquire(&ptable.lock);
@@ -8968,7 +8958,6 @@ pushcli(void)
 80104771:	89 e5                	mov    %esp,%ebp
 80104773:	53                   	push   %ebx
 80104774:	83 ec 04             	sub    $0x4,%esp
-  asm volatile("pushfl; popl %0" : "=r" (eflags));
 80104777:	9c                   	pushf  
 80104778:	5b                   	pop    %ebx
   asm volatile("cli");
