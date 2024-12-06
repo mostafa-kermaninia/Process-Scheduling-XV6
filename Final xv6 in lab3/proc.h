@@ -1,3 +1,5 @@
+enum schedqueue { RR, SJF, FCFS };
+
 // Per-CPU state
 struct cpu {
   uchar apicid;                // Local APIC ID
@@ -8,6 +10,8 @@ struct cpu {
   int ncli;                    // Depth of pushcli nesting.
   int intena;                  // Were interrupts enabled before pushcli?
   struct proc *proc;           // The process running on this cpu or null
+  enum schedqueue schedqueue;  // Current scheduling queue
+  int queueticks;              // Numbert of ticks in the currecnt queue
 };
 
 extern struct cpu cpus[NCPU];
@@ -55,6 +59,7 @@ struct proc {
   int syscall_invokes[MAX_SYSCALLS];   // Array to count each system call
   int syscall_num[MAX_SYSCALLS];      // system calls number
   char *syscall_name[MAX_SYSCALLS];   // system calls name
+  enum schedqueue schedqueue;  // Current scheduling queue
 };
 
 // Process memory is laid out contiguously, low addresses first:

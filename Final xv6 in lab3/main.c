@@ -17,6 +17,7 @@ extern char end[]; // first address after kernel loaded from ELF file
 int
 main(void)
 {
+  cprintf("\n\nMostafa Kermaninia | Amir Naddaf | Reza Chehreghani\n\n");
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
   mpinit();        // detect other processors
@@ -51,6 +52,8 @@ mpenter(void)
 static void
 mpmain(void)
 {
+  mycpu()->schedqueue = RR;
+  mycpu()->queueticks = 0;
   cprintf("cpu%d: starting %d\n", cpuid(), cpuid());
   idtinit();       // load idt register
   xchg(&(mycpu()->started), 1); // tell startothers() we're up

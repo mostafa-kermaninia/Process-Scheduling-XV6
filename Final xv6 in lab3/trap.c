@@ -51,11 +51,11 @@ trap(struct trapframe *tf)
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
-      if (myproc() != 0)
-        cprintf("tick: %d    pid: %d\n", ticks, myproc()->pid);
       wakeup(&ticks);
       release(&tickslock);
     }
+    if (myproc() != 0)
+      cprintf("cpu:%d tick:%d pid:%d queue:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue);
     lapiceoi();
     break;
   case T_IRQ0 + IRQ_IDE:
@@ -105,8 +105,16 @@ trap(struct trapframe *tf)
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   if(myproc() && myproc()->state == RUNNING &&
-     tf->trapno == T_IRQ0+IRQ_TIMER)
-    yield();
+     tf->trapno == T_IRQ0+IRQ_TIMER){
+    mycpu()->queueticks += 1;
+    if((mycpu()->schedqueue == RR   && mycpu()->queueticks == 6) ||
+       (mycpu()->schedqueue == SJF  && mycpu()->queueticks == 4) ||
+       (mycpu()->schedqueue == FCFS && mycpu()->queueticks == 2)){
+      mycpu()->schedqueue = (mycpu()->schedqueue + 1) % NSCHEDQUEUE;
+      yield();
+    } else if(mycpu()->schedqueue == RR)
+      yield();
+  }
 
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
