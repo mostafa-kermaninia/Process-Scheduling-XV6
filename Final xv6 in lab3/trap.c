@@ -111,6 +111,7 @@ trap(struct trapframe *tf)
        (mycpu()->schedqueue == SJF  && mycpu()->queueticks == 4) ||
        (mycpu()->schedqueue == FCFS && mycpu()->queueticks == 2)){
       mycpu()->schedqueue = (mycpu()->schedqueue + 1) % NSCHEDQUEUE;
+      mycpu()->queueticks = 0;
       yield();
     } else if(mycpu()->schedqueue == RR)
       yield();
