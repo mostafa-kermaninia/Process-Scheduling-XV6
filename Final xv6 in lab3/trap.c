@@ -56,6 +56,8 @@ trap(struct trapframe *tf)
     }
     if (myproc() != 0)
       cprintf("cpu:%d tick:%d pid:%d queue:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue);
+    // else
+    //   cprintf("cpu:%d tick:%d proc:%d queue:%d\n", cpuid(), ticks, mycpu()->proc, mycpu()->schedqueue);
     lapiceoi();
     break;
   case T_IRQ0 + IRQ_IDE:
@@ -106,7 +108,7 @@ trap(struct trapframe *tf)
   // If interrupts were on while locks held, would need to check nlock.
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER){
-    mycpu()->queueticks += 1;
+    mycpu()->queueticks++;
     if((mycpu()->schedqueue == RR   && mycpu()->queueticks == 6) ||
        (mycpu()->schedqueue == SJF  && mycpu()->queueticks == 4) ||
        (mycpu()->schedqueue == FCFS && mycpu()->queueticks == 2)){

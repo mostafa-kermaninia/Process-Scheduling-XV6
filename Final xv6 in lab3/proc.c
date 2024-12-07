@@ -15,6 +15,7 @@ struct {
 static struct proc *initproc;
 
 int nextpid = 1;
+int nextfcfs = 1;
 extern void forkret(void);
 extern void trapret(void);
 
@@ -227,8 +228,10 @@ fork(void)
   // Default scheduling queue
   if(curproc->pid == 1) // except shell
     np->schedqueue = RR;
-  else
+  else{
     np->schedqueue = FCFS;
+    np ->fcfsentry = nextfcfs++;
+  }
 
   return pid;
 }
@@ -334,6 +337,10 @@ switch_to_chosen_process(struct proc *p, struct cpu *c){
 
   swtch(&(c->scheduler), p->context);
   switchkvm();
+
+  // Process is done running for now.
+  // It should have changed its p->state before coming back.
+  c->proc = 0;
 }
 
 //PAGEBREAK: 42
@@ -347,7 +354,7 @@ switch_to_chosen_process(struct proc *p, struct cpu *c){
 void
 scheduler(void)
 {
-  struct proc *p, *firstproc;
+  struct proc *p, *nextp, *nextrrp = ptable.proc;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -355,17 +362,23 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
 
+    nextp = 0;
     acquire(&ptable.lock);
     switch(c->schedqueue){
     case RR:
       // Loop over process table looking for process to run.
-      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        if(p->state != RUNNABLE || p->schedqueue != RR)
-          continue;
+      p = nextrrp;
+      do {
+        if(p->state != RUNNABLE || p->schedqueue != RR){
+          if(++p == &ptable.proc[NPROC])
+            p = ptable.proc;
+            continue;
+        }
 
-        switch_to_chosen_process(p, c);
-        c->proc = 0;
-      }
+        nextrrp = p;
+        nextp = p;
+        break;
+      } while (p != nextrrp);
       break;
     case SJF:
 
@@ -373,29 +386,22 @@ scheduler(void)
 
     case FCFS:
       // Loop over process table looking for the first process to run.
-      firstproc = 0;
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
         if(p->state != RUNNABLE || p->schedqueue != FCFS)
           continue;
 
-        if(firstproc == 0 || p->pid < firstproc->pid)
-          firstproc = p;
+        if(nextp == 0 || p->fcfsentry < nextp->fcfsentry)
+          nextp = p;
       }
-
-      if(firstproc != 0)
-        switch_to_chosen_process(firstproc, c);
       break;
     }
 
     // start next queue if queue is empty
-    if(c->proc == 0){
+    if(nextp == 0){
       c->schedqueue = (c->schedqueue + 1) % NSCHEDQUEUE;
       c->queueticks = 0;
-    }
-
-    // Process is done running for now.
-    // It should have changed its p->state before coming back.
-    c->proc = 0;
+    } else
+      switch_to_chosen_process(nextp, c);
 
     release(&ptable.lock);
   }
