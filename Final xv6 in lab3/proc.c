@@ -119,6 +119,19 @@ found:
   // Initialize number of system calls
   p->syscalls_count = 0;
 
+  // Default scheduling queue except init and shell
+  if(p->pid == 1 ||
+     p->pid == 2)
+    p->schedqueue = RR;
+  else{
+    p->schedqueue = SJF;
+    p->fcfsentry = nextfcfs++;
+  }
+
+  // Default SJF values
+  p->bursttime = 2;
+  p->confidence = 50;
+
   return p;
 }
 
@@ -225,14 +238,6 @@ fork(void)
 
   release(&ptable.lock);
 
-  // Default scheduling queue
-  if(curproc->pid == 1) // except shell
-    np->schedqueue = RR;
-  else{
-    np->schedqueue = FCFS;
-    np ->fcfsentry = nextfcfs++;
-  }
-
   return pid;
 }
 
@@ -326,6 +331,14 @@ wait(void)
   }
 }
 
+unsigned long randstate = 42;
+unsigned int
+rand()
+{
+  randstate = randstate * 1664525 + 1013904223;
+  return randstate;
+}
+
 // Switch to chosen process.  It is the process's job
 // to release ptable.lock and then reacquire it
 // before jumping back to us.
@@ -354,7 +367,7 @@ switch_to_chosen_process(struct proc *p, struct cpu *c){
 void
 scheduler(void)
 {
-  struct proc *p, *nextp, *nextrrp = ptable.proc;
+  struct proc *p, *nextp, *nextrrp = ptable.proc, *longestjob;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -380,8 +393,23 @@ scheduler(void)
         break;
       } while (p != nextrrp);
       break;
-    case SJF:
 
+    case SJF:
+      longestjob = 0;
+      // Loop over process table looking for the shortest process to run.
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        if(p->state != RUNNABLE || p->schedqueue != SJF)
+          continue;
+
+        if(nextp == 0 || p->bursttime < nextp->bursttime)
+          if(rand() % 100 < p->confidence)
+            nextp = p;
+          
+        if(longestjob == 0 || p->bursttime > longestjob->bursttime)
+          longestjob = p;
+      }
+      if(nextp == 0)
+        nextp = longestjob;
       break;
 
     case FCFS:

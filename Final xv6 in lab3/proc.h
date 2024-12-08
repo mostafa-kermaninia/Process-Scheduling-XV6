@@ -61,6 +61,8 @@ struct proc {
   char *syscall_name[MAX_SYSCALLS];   // system calls name
   enum schedqueue schedqueue;  // Current scheduling queue
   int fcfsentry;               // Process entry number in FCFS queue
+  int bursttime;               // Burst Time of SJF
+  int confidence;              // Confidence of SJF
 };
 
 // Process memory is laid out contiguously, low addresses first:
