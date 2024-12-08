@@ -111,3 +111,13 @@ int sys_get_most_invoked_syscall(){
 int sys_list_all_processes(void){
   return list_all_processes();
 }
+
+int sys_change_queue(void){
+  int pid, sel_q;
+  if (argint(0, &pid) < 0)
+    return -1;
+  if (argint(1, &sel_q) < 0)
+    return -1;
+  change_queue(pid, sel_q);
+  return 0;
+}

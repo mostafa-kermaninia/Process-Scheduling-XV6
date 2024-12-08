@@ -485,17 +485,18 @@ age_proccesses(void)
     if (p->state != RUNNABLE)
       continue;
     p->wait_time++;
-    if (p->wait_time == 800)
+    if (p->wait_time % 800 == 0 && p->wait_time != 0)
     {
-      p->wait_time = 0;
       switch (p->schedqueue)
       {
       case FCFS:
         p->schedqueue = SJF;
+        p->arraival = ticks;
         cprintf("pid:%d perv_queue:FCFS new_queue:SJF\n", p->pid);
         break;
       case SJF:
         p->schedqueue = RR;
+        p->arraival = ticks;
         cprintf("pid:%d perv_queue:SJF new_queue:RR\n", p->pid);
         break;
       default:
@@ -744,4 +745,23 @@ list_all_processes(){
     }
   release(&ptable.lock);
   return (p_count == 0) ? -1 : 0;
+}
+
+void
+change_queue(int pid, int chosen_q){
+  if (chosen_q < 0 || chosen_q > 2){
+    cprintf("Invalid queue\n");
+    return;
+    }
+
+  struct proc *p;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if (p->pid == pid && chosen_q != p->schedqueue){
+      cprintf("pid: %d perv_q:%d new_q:%d\n", pid, p->schedqueue, chosen_q);
+      p->arraival = ticks;
+      p->schedqueue = chosen_q;
+    }
+  }
+  release(&ptable.lock);
 }
