@@ -121,3 +121,8 @@ int sys_change_queue(void){
   change_queue(pid, sel_q);
   return 0;
 }
+
+int sys_processes_info(void){
+  processes_info();
+  return 0;
+}

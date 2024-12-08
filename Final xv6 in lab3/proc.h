@@ -38,6 +38,7 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+
 #define MAX_SYSCALLS 64  // Maximum number of distinct system calls to track
 
 // Per-process state

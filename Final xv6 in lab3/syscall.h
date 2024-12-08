@@ -26,3 +26,4 @@
 #define SYS_get_most_invoked_syscall 25
 #define SYS_list_all_processes 26
 #define SYS_change_queue 27
+#define SYS_processes_info 28
