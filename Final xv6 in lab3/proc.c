@@ -392,9 +392,12 @@ scheduler(void)
             p = ptable.proc;
             continue;
         }
-
-        nextrrp = p;
+        
         nextp = p;
+
+        if(++p == &ptable.proc[NPROC])
+          p = ptable.proc;
+        nextrrp = p;
         break;
       } while (p != nextrrp);
       break;
