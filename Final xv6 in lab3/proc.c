@@ -819,6 +819,8 @@ void change_queue(int pid, int chosen_q)
       cprintf("pid: %d perv_q:%d new_q:%d\n", pid, p->schedqueue, chosen_q);
       p->arraival = ticks;
       p->schedqueue = chosen_q;
+      if (chosen_q == FCFS)
+        p->fcfsentry = nextfcfs++;
     }
   }
   release(&ptable.lock);
