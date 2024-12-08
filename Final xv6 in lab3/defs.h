@@ -128,6 +128,7 @@ int             list_all_processes(void);
 int             get_most_invoked_syscall(int);
 void            change_queue(int, int);
 void            processes_info(void);
+void            set_bc(int, int, int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

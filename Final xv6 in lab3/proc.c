@@ -819,8 +819,6 @@ void change_queue(int pid, int chosen_q)
       cprintf("pid: %d perv_q:%d new_q:%d\n", pid, p->schedqueue, chosen_q);
       p->arraival = ticks;
       p->schedqueue = chosen_q;
-      if (chosen_q == FCFS)
-        p->fcfsentry = nextfcfs++;
     }
   }
   release(&ptable.lock);
@@ -831,7 +829,7 @@ void processes_info(void)
   struct proc *p;
 
   acquire(&ptable.lock);
-  // add consecutive run
+  cprintf(".....................................\n");
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
     if (p->state != UNUSED)
@@ -862,6 +860,23 @@ void processes_info(void)
       cprintf("name:%s pid:%d state:%s queue:%d wait:%d confidence:%d burst time:%d consecutive:%d arrival:%d\n"
               , p->name, p->pid, state_name, p->schedqueue,
               p->wait_time, p->confidence, p->bursttime, p->consecutive_time, p->arraival);
+    }
+  }
+  cprintf(".....................................\n");
+  release(&ptable.lock);
+}
+
+
+void set_bc(int pid, int bursttime, int confidence)
+{
+  struct proc *p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->pid == pid)
+    {
+      p->bursttime = bursttime;
+      p->confidence = confidence;
     }
   }
   release(&ptable.lock);
