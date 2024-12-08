@@ -55,8 +55,8 @@ trap(struct trapframe *tf)
       wakeup(&ticks);
       release(&tickslock);
     }
-    // if (myproc() != 0)
-    //   cprintf("cpu:%d tick:%d pid:%d queue:%d arrival:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue, myproc()->arraival);
+    if (myproc() != 0)
+      cprintf("cpu:%d tick:%d pid:%d queue:%d arrival:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue, myproc()->arraival);
     // else
     //   cprintf("cpu:%d tick:%d proc:%d queue:%d\n", cpuid(), ticks, mycpu()->proc, mycpu()->schedqueue);
     lapiceoi();
@@ -110,13 +110,13 @@ trap(struct trapframe *tf)
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER){
     mycpu()->queueticks++;
-    if((mycpu()->schedqueue == RR   && mycpu()->queueticks == 6) ||
-       (mycpu()->schedqueue == SJF  && mycpu()->queueticks == 4) ||
-       (mycpu()->schedqueue == FCFS && mycpu()->queueticks == 2)){
+    if((mycpu()->schedqueue == RR   && mycpu()->queueticks == 30) ||
+       (mycpu()->schedqueue == SJF  && mycpu()->queueticks == 20) ||
+       (mycpu()->schedqueue == FCFS && mycpu()->queueticks == 10)){
       mycpu()->schedqueue = (mycpu()->schedqueue + 1) % NSCHEDQUEUE;
       mycpu()->queueticks = 0;
       yield();
-    } else if(mycpu()->schedqueue == RR)
+    } else if(mycpu()->schedqueue == RR && mycpu()->queueticks % 5 == 0)
       yield();
   }
 

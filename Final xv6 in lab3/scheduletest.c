@@ -2,7 +2,7 @@
 #include "stat.h"
 #include "user.h"
 
-#define NPROC 9
+#define NPROC 5
 
 int
 fibonacci(int n){
@@ -15,7 +15,7 @@ fibonacci(int n){
 int
 main(void)
 {
-  int pid, n = 41;
+  int pid, n = 39;
 
   for(int i = 0; i < NPROC; i++){
     pid = fork();
