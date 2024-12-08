@@ -135,6 +135,9 @@ found:
   p->arraival = ticks;
   p->wait_time = 0;
 
+  // Initialize consecutive_time
+  p->consecutive_time = 0;
+
   // Default SJF values
   p->bursttime = 2;
   p->confidence = 50;
@@ -532,6 +535,20 @@ void age_processes(void)
   release(&ptable.lock);
 }
 
+void add_consecutive(){
+  
+  acquire(&ptable.lock);
+  struct proc *p;
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->state == RUNNING)
+      p->consecutive_time++;
+    else 
+      p->consecutive_time = 0;
+  }
+  release(&ptable.lock);
+}
+
 // A fork child's very first scheduling by scheduler()
 // will swtch here.  "Return" to user space.
 void forkret(void)
@@ -842,8 +859,9 @@ void processes_info(void)
         break;
       }
 
-      cprintf("name:%s pid:%d state:%s queue:%d wait:%d confidence:%d burst time:%d arrival:%d\n", p->name, p->pid, state_name, p->schedqueue,
-              p->wait_time, p->confidence, p->bursttime, p->arraival);
+      cprintf("name:%s pid:%d state:%s queue:%d wait:%d confidence:%d burst time:%d consecutive:%d arrival:%d\n"
+              , p->name, p->pid, state_name, p->schedqueue,
+              p->wait_time, p->confidence, p->bursttime, p->consecutive_time, p->arraival);
     }
   }
   release(&ptable.lock);

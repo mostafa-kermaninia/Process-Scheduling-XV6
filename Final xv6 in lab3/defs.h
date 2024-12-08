@@ -121,6 +121,7 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void            age_processes(void);
+void            add_consecutive(void);
 void            create_palindrome(int);
 int             sort_syscalls(int);
 int             list_all_processes(void);

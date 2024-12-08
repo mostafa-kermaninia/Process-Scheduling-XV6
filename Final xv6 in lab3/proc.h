@@ -66,6 +66,7 @@ struct proc {
   int confidence;              // Confidence of SJF
   int arraival;                // Attaival time
   int wait_time;               // Wait time in a queue
+  int consecutive_time;        // Num of ticks that process is running 
 };
 
 // Process memory is laid out contiguously, low addresses first:
