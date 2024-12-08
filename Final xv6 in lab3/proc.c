@@ -485,16 +485,18 @@ age_proccesses(void)
     if (p->state != RUNNABLE)
       continue;
     p->wait_time++;
-    if (p->wait_time % 800 == 0 && p->wait_time != 0)
+    if (p->wait_time == 800)
     {
       switch (p->schedqueue)
       {
       case FCFS:
+        p->wait_time = 0;
         p->schedqueue = SJF;
         p->arraival = ticks;
         cprintf("pid:%d perv_queue:FCFS new_queue:SJF\n", p->pid);
         break;
       case SJF:
+        p->wait_time = 0;
         p->schedqueue = RR;
         p->arraival = ticks;
         cprintf("pid:%d perv_queue:SJF new_queue:RR\n", p->pid);
