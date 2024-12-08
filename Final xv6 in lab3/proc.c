@@ -124,7 +124,7 @@ found:
      p->pid == 2)
     p->schedqueue = RR;
   else{
-    p->schedqueue = SJF;
+    p->schedqueue = FCFS;
     p->fcfsentry = nextfcfs++;
   }
 
