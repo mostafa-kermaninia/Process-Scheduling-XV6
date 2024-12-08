@@ -100,6 +100,11 @@ exec(char *path, char **argv)
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   switchuvm(curproc);
+
+  // Change queue for execs of shell's fork
+  if(curproc->parent->pid == 2)
+    curproc->schedqueue = FCFS;
+    
   freevm(oldpgdir);
   return 0;
 
