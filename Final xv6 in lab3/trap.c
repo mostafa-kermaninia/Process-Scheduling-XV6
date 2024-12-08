@@ -51,11 +51,12 @@ trap(struct trapframe *tf)
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
+      age_proccesses();
       wakeup(&ticks);
       release(&tickslock);
     }
     if (myproc() != 0)
-      cprintf("cpu:%d tick:%d pid:%d queue:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue);
+      cprintf("cpu:%d tick:%d pid:%d queue:%d arrival:%d\n", cpuid(), ticks, myproc()->pid, myproc()->schedqueue, myproc()->arraival);
     // else
     //   cprintf("cpu:%d tick:%d proc:%d queue:%d\n", cpuid(), ticks, mycpu()->proc, mycpu()->schedqueue);
     lapiceoi();

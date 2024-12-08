@@ -63,6 +63,8 @@ struct proc {
   int fcfsentry;               // Process entry number in FCFS queue
   int bursttime;               // Burst Time of SJF
   int confidence;              // Confidence of SJF
+  int arraival;                // Attaival time
+  int wait_time;               // Wait time in a queue
 };
 
 // Process memory is laid out contiguously, low addresses first:

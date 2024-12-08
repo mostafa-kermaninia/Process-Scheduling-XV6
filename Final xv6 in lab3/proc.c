@@ -119,6 +119,10 @@ found:
   // Initialize number of system calls
   p->syscalls_count = 0;
 
+  // Initialize arraival time and wait time
+  p->arraival = ticks;
+  p->wait_time = 0;
+
   // Default scheduling queue except init and shell
   if(p->pid == 1 ||
      p->pid == 2)
@@ -347,7 +351,8 @@ switch_to_chosen_process(struct proc *p, struct cpu *c){
   c->proc = p;
   switchuvm(p);
   p->state = RUNNING;
-
+  p->wait_time = 0;
+  
   swtch(&(c->scheduler), p->context);
   switchkvm();
 
@@ -468,6 +473,34 @@ yield(void)
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
+  release(&ptable.lock);
+}
+
+void 
+age_proccesses(void)
+{
+  acquire(&ptable.lock);  
+  struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if (p->state != RUNNABLE)
+      continue;
+    p->wait_time++;
+    if (p->wait_time == 800)
+    {
+      p->wait_time = 0;
+      switch (p->schedqueue)
+      {
+      case FCFS:
+        p->schedqueue = SJF;
+        break;
+      case SJF:
+        p->schedqueue = RR;
+        break;
+      default:
+        break;
+      }
+    }
+  }
   release(&ptable.lock);
 }
 
