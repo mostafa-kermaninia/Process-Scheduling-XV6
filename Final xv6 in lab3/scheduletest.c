@@ -2,7 +2,7 @@
 #include "stat.h"
 #include "user.h"
 
-#define NPROC 8
+#define NPROC 9
 
 int
 fibonacci(int n){

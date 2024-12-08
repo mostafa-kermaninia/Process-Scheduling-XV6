@@ -119,9 +119,6 @@ found:
   // Initialize number of system calls
   p->syscalls_count = 0;
 
-  // Initialize arraival time and wait time
-  p->arraival = ticks;
-  p->wait_time = 0;
 
   // Default scheduling queue except init and shell
   if(p->pid == 1 ||
@@ -131,6 +128,9 @@ found:
     p->schedqueue = FCFS;
     p->fcfsentry = nextfcfs++;
   }
+  // Initialize arraival time and wait time
+  p->arraival = ticks;
+  p->wait_time = 0;
 
   // Default SJF values
   p->bursttime = 2;
@@ -352,7 +352,7 @@ switch_to_chosen_process(struct proc *p, struct cpu *c){
   switchuvm(p);
   p->state = RUNNING;
   p->wait_time = 0;
-  
+
   swtch(&(c->scheduler), p->context);
   switchkvm();
 
@@ -492,9 +492,11 @@ age_proccesses(void)
       {
       case FCFS:
         p->schedqueue = SJF;
+        cprintf("pid:%d perv_queue:FCFS new_queue:SJF\n", p->pid);
         break;
       case SJF:
         p->schedqueue = RR;
+        cprintf("pid:%d perv_queue:SJF new_queue:RR\n", p->pid);
         break;
       default:
         break;
